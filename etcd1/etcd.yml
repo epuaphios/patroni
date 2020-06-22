@@ -2,10 +2,13 @@
 # with 3-node etcd cluster as the DCS and one haproxy node
 version: "2"
 services:
+  
     etcd1:
         image: patroni
         env_file: etcd1.env
-        network_mode: "host"
+        networks:
+          cluster_net:
+            ipv4_address: 192.168.1.15
         container_name: etcd1
         hostname: etcd1
         command: etcd -name etcd1 -initial-advertise-peer-urls http://192.168.1.15:2380 -advertise-client-urls http://192.168.1.15:2379
@@ -14,3 +17,12 @@ services:
         ports:
             - "2380:2380"
             - "2379:2379"
+
+networks:
+  cluster_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+       subnet: 192.168.1.0/24

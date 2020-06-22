@@ -6,7 +6,9 @@ services:
     etcd2:
         image: patroni
         env_file: etcd2.env
-        network_mode: "host"
+        networks:
+          cluster_net:
+            ipv4_address: 192.168.1.16
         container_name: etcd2
         hostname: etcd2
         command: etcd -name etcd2 -initial-advertise-peer-urls http://192.168.1.16:2380 -advertise-client-urls http://192.168.1.16:2379
@@ -15,3 +17,12 @@ services:
         ports:
             - "2380:2380"
             - "2379:2379"
+
+networks:
+  cluster_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+       subnet: 192.168.1.0/24
