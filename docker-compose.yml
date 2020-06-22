@@ -1,69 +1,118 @@
 # docker compose file for running a 3-node PostgreSQL cluster
 # with 3-node etcd cluster as the DCS and one haproxy node
 version: "2"
-
-networks:
-    demo:
-
 services:
     etcd1:
         image: patroni
-        networks: [ demo ]
-        env_file: docker/etcd.env
-        container_name: demo-etcd1
+        env_file: docker/etcd1.env
+        networks:
+          cluster_net:
+            ipv4_address: 192.168.1.7
+        container_name: etcd1
         hostname: etcd1
-        command: etcd -name etcd1 -initial-advertise-peer-urls http://etcd1:2380
+        command: etcd -name etcd1 -initial-advertise-peer-urls http://192.168.1.7:2380 -advertise-client-urls http://192.168.1.7:2379
+        volumes:
+          - /etcd-data/etcd1/:/home/postgres/etcd1.data
+        ports:
+            - "2380:2380"
+            - "2379:2379"
 
     etcd2:
         image: patroni
-        networks: [ demo ]
-        env_file: docker/etcd.env
-        container_name: demo-etcd2
+        env_file: docker/etcd2.env
+        container_name: etcd2
+        networks:
+          cluster_net:
+            ipv4_address: 192.168.1.8
         hostname: etcd2
-        command: etcd -name etcd2 -initial-advertise-peer-urls http://etcd2:2380
+        command: etcd -name etcd2 -initial-advertise-peer-urls http://192.168.1.8:2381 -advertise-client-urls http://192.168.1.8:2379
+        volumes:
+          - /etcd-data/etcd2/:/home/postgres/etcd2.data
+        ports:
+            - "2381:2381"
+            - "2378:2379"
 
     etcd3:
         image: patroni
-        networks: [ demo ]
-        env_file: docker/etcd.env
-        container_name: demo-etcd3
+        env_file: docker/etcd3.env
+        networks:
+          cluster_net:
+            ipv4_address: 192.168.1.9
+        container_name: etcd3
         hostname: etcd3
-        command: etcd -name etcd3 -initial-advertise-peer-urls http://etcd3:2380
+        command: etcd -name etcd3 -initial-advertise-peer-urls http://192.168.1.9:2382 -advertise-client-urls http://192.168.1.9:2379
+        volumes:
+          - /etcd-data/etcd3/:/home/postgres/etcd3.data
+        ports:
+            - "2382:2382"
+            - "2377:2379"
 
     patroni1:
         image: patroni
-        networks: [ demo ]
-        env_file: docker/patroni.env
+        env_file: docker/patroni1.env
+        networks:
+          cluster_net:
+            ipv4_address: 192.168.1.10
         hostname: patroni1
-        container_name: demo-patroni1
+        container_name: patroni1
         environment:
             PATRONI_NAME: patroni1
+        volumes:
+          - /pg_data1/:/home/postgres/data1/
+        ports:
+            - "5433:5432"
 
     patroni2:
         image: patroni
-        networks: [ demo ]
-        env_file: docker/patroni.env
+        networks:
+          cluster_net:
+            ipv4_address: 192.168.1.11
+        env_file: docker/patroni2.env
         hostname: patroni2
-        container_name: demo-patroni2
+        container_name: patroni2
         environment:
             PATRONI_NAME: patroni2
+        volumes:
+          - /pg_data2/:/home/postgres/data2/
+        ports:
+            - "5434:5432"
 
     patroni3:
         image: patroni
-        networks: [ demo ]
-        env_file: docker/patroni.env
+        networks:
+          cluster_net:
+            ipv4_address: 192.168.1.12
+        env_file: docker/patroni3.env
         hostname: patroni3
-        container_name: demo-patroni3
+        container_name: patroni3
         environment:
             PATRONI_NAME: patroni3
+        volumes:
+          - /pg_data3/:/home/postgres/data3/
+        ports:
+            - "5435:5432"
 
     haproxy:
         image: patroni
-        networks: [ demo ]
-        env_file: docker/patroni.env
+        networks:
+          cluster_net:
+            ipv4_address: 192.168.1.13
         hostname: haproxy
-        container_name: demo-haproxy
+        container_name: haproxy
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - ./docker/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
         ports:
             - "5000:5000"
             - "5001:5001"
+            - "7000:7000"
         command: haproxy
+
+networks:
+  cluster_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+       subnet: 192.168.1.0/24
