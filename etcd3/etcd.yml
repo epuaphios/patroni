@@ -5,10 +5,10 @@ services:
 
     etcd3:
         image: patroni
-        env_file: docker/etcd3.env
+        env_file: etcd3.env
         container_name: etcd3
         hostname: etcd3
-        command: etcd -name etcd3 -initial-advertise-peer-urls http://192.168.1.231:2380 -advertise-client-urls http://192.168.1.231:2379
+        command: etcd -name etcd3 -initial-advertise-peer-urls http://192.168.1.6:2380 -advertise-client-urls http://192.168.1.6:2379
         volumes:
           - /etcd-data/etcd3/:/home/postgres/etcd3.data
         ports:

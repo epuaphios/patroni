@@ -5,7 +5,7 @@ services:
 
     etcd2:
         image: patroni
-        env_file: docker/etcd2.env
+        env_file: etcd2.env
         container_name: etcd2
         hostname: etcd2
         command: etcd -name etcd2 -initial-advertise-peer-urls http://192.168.1.16:2380 -advertise-client-urls http://192.168.1.16:2379

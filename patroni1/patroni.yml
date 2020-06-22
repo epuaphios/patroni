@@ -5,7 +5,7 @@ services:
 
     patroni1:
         image: patroni
-        env_file: docker/patroni1.env
+        env_file: patroni1.env
         hostname: patroni1
         container_name: patroni1
         environment:
