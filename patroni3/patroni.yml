@@ -1,0 +1,16 @@
+# docker compose file for running a 3-node PostgreSQL cluster
+# with 3-node etcd cluster as the DCS and one haproxy node
+version: "2"
+services:
+
+    patroni3:
+        image: patroni
+        env_file: docker/patroni3.env
+        hostname: patroni3
+        container_name: patroni3
+        environment:
+            PATRONI_NAME: patroni3
+        volumes:
+          - /pg_data3/:/home/postgres/data3/
+        ports:
+            - "5432:5432"
