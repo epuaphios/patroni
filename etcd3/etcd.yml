@@ -6,9 +6,6 @@ services:
     etcd3:
         image: patroni
         env_file: etcd3.env
-        networks:
-          cluster_net:
-            ipv4_address: 192.168.1.6
         container_name: etcd3
         hostname: etcd3
         command: etcd -name etcd3 -initial-advertise-peer-urls http://192.168.1.6:2380 -advertise-client-urls http://192.168.1.6:2379
@@ -16,13 +13,4 @@ services:
           - /etcd-data/etcd3/:/home/postgres/etcd3.data
         ports:
             - "2380:2380"
-            - "2378:2379"
-
-networks:
-  cluster_net:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-      -
-       subnet: 192.168.1.0/24
+            - "2379:2379"
