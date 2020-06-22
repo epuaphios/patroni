@@ -6,6 +6,7 @@ services:
     etcd3:
         image: patroni
         env_file: etcd3.env
+        network_mode: "host"
         container_name: etcd3
         hostname: etcd3
         command: etcd -name etcd3 -initial-advertise-peer-urls http://192.168.1.6:2380 -advertise-client-urls http://192.168.1.6:2379
