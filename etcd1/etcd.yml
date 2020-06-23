@@ -9,7 +9,7 @@ services:
         container_name: etcd1
         network_mode: "host"
         hostname: etcd1
-        command: etcd -name etcd1 -initial-advertise-peer-urls http://192.168.1.15:2380 -advertise-client-urls http://192.168.1.15:2379
+        command: etcd -name etcd1 -initial-advertise-peer-urls http://192.168.1.15:2380 -advertise-client-urls http://192.168.1.15:2379 --enable-v2=true
         volumes:
           - /etcd-data/etcd1/:/home/postgres/etcd1.data
         ports:
