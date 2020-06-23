@@ -4,7 +4,7 @@ version: "2"
 services:
 
     etcd3:
-        image: patroni
+        image: quay.io/coreos/etcd:v3.4.0
         env_file: etcd3.env
         container_name: etcd3
         hostname: etcd3
