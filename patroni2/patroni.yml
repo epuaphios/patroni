@@ -7,10 +7,11 @@ services:
         image: patroni
         env_file: patroni2.env
         hostname: patroni2
+        network_mode: "host"
         container_name: patroni2
         environment:
             PATRONI_NAME: patroni2
         volumes:
           - /pg_data2/:/home/postgres/data2/
         ports:
-            - "5434:5432"
+            - "5432:5432"
