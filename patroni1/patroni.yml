@@ -12,6 +12,6 @@ services:
         environment:
             PATRONI_NAME: patroni1
         volumes:
-          - /pg_data1/:/home/postgres/data1/
+          - /data/pg_data1/:/home/postgres/data1/
         ports:
             - "5432:5432"
