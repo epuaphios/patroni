@@ -2,7 +2,6 @@
 # with 3-node etcd cluster as the DCS and one haproxy node
 version: "2"
 services:
-
     patroni3:
         image: patroni
         env_file: patroni3.env
